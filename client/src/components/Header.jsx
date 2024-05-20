@@ -9,7 +9,7 @@ export default function Headers() {
   return (
     <Navbar className="border-b-2">
       <Link to="/">
-        <span className="self-center whitespace-nowrap p-3 bg-gradient-to-r from-blue-400 via-grren-900 to-pink-200 rounded-lg">
+        <span className="self-center whitespace-nowrap p-3 bg-gradient-to-r from-blue-400 via-grren-900 to-pink-200 rounded-lg outline text-white">
           Food blog
         </span>
       </Link>
@@ -29,7 +29,7 @@ export default function Headers() {
           <FaMoon />
         </Button>
         <Link to="/sign-in">
-          <Button gradientDuoTone="purpleToPink" className="rounded-lg">
+          <Button gradientDuoTone="purpleToPink" className="rounded-lg outline">
             Sign In
           </Button>
         </Link>
