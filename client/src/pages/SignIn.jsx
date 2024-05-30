@@ -1,4 +1,4 @@
-import { Button, TextInput } from "flowbite-react";
+import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
@@ -13,6 +13,7 @@ export default function SignIn() {
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  console.log(error);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
@@ -31,16 +32,16 @@ export default function SignIn() {
       });
       const data = await res.json();
       setLoading(false);
-      if (data === false) {
-        setError(true);
-        return;
+      if (data.success === false) {
+        return setError(data.message);
       }
-      console.log(data);
-
-      navigate("/");
+      setLoading(false);
+      if (res.ok) {
+        navigate("/");
+      }
     } catch (error) {
-      setError(true);
-      console.log(error.message);
+      setError(error.message);
+      setLoading(false);
     }
   };
   return (
@@ -84,6 +85,7 @@ export default function SignIn() {
               <TextInput
                 type={showPassword ? "text" : "password"}
                 id="password"
+                placeholder="********"
                 onChange={handleOnChange}
               ></TextInput>
               {showPassword ? (
@@ -99,8 +101,20 @@ export default function SignIn() {
               )}
             </div>
 
-            <Button type="submit" gradientDuoTone="purpleToPink" className="">
-              Sign In
+            <Button
+              type="submit"
+              gradientDuoTone="purpleToPink"
+              className=""
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className=" pl-3">Loading...</span>
+                </>
+              ) : (
+                "Sign In"
+              )}
             </Button>
             <Button
               className="uppercase bg-gradient-to-r from-red-400 via-grren-900 to-pink-200 rounded-lg outline text-white"
@@ -115,6 +129,11 @@ export default function SignIn() {
               Sign Up
             </Link>
           </div>
+          {error && (
+            <Alert className="fixed mt-5" color="failure">
+              {error}
+            </Alert>
+          )}
         </div>
       </div>
     </div>

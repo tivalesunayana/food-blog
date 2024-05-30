@@ -38,11 +38,11 @@ export const SignIn = async (req, res, next) => {
   try {
     const validUser = await User.findOne({ email });
     if (!validUser) {
-      next(errorHandler(400, "Email is invalid"));
+      return next(errorHandler(400, "User not found"));
     }
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) {
-      next(errorHandler(400, "Inavalid Password"));
+      return next(errorHandler(400, "Inavalid Password"));
     }
     const token = jwt.sign(
       { id: validUser._id, isAdmin: validUser.isAdmin },
@@ -51,7 +51,7 @@ export const SignIn = async (req, res, next) => {
     const { password: pass, ...rest } = validUser._doc;
     res
       .status(200)
-      .cookie("access toke", token, {
+      .cookie("access_token", token, {
         httpOnly: true,
       })
       .json(rest);

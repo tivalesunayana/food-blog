@@ -1,6 +1,6 @@
-import { Button, TextInput } from "flowbite-react";
+import { Button, Spinner, TextInput } from "flowbite-react";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 
 export default function SignUp() {
@@ -8,9 +8,12 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  console.log(error);
+  const navigate = useNavigate();
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
@@ -29,18 +32,18 @@ export default function SignUp() {
       });
 
       const data = await res.json(); // parses JSON response into native JavaScript objects
-      setLoading(false);
 
-      if (data === false) {
-        setError(true);
-        return;
+      if (data.success === false) {
+        return setError(data.message);
       }
 
-      console.log(data);
+      setLoading(false);
+      if (res.ok) {
+        navigate("/sign-in");
+      }
     } catch (error) {
-      setError(true);
-
-      console.log(error.message);
+      setError(error.message);
+      setLoading(false);
     }
   };
   return (
@@ -99,8 +102,20 @@ export default function SignUp() {
               )}
             </div>
 
-            <Button gradientDuoTone="purpleToPink" type="submit" className="">
-              Sign Up
+            <Button
+              gradientDuoTone="purpleToPink"
+              type="submit"
+              className=""
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="pl-3">Loading...</span>
+                </>
+              ) : (
+                "Sign Up"
+              )}
             </Button>
             <Button
               className="uppercase bg-gradient-to-r from-red-400 via-grren-900 to-pink-200 rounded-lg outline text-white"
@@ -115,6 +130,7 @@ export default function SignUp() {
               Sign In
             </Link>
           </div>
+          {error && <p className="fixed text-red-700 mt-5">{error}</p>}
         </div>
       </div>
     </div>
